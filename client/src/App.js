@@ -1,4 +1,5 @@
 import BookList from './components/BookList'
+import AddBook from './components/AddBook'
 
 
 function App() {
@@ -6,6 +7,7 @@ function App() {
     <div id="main" className="App">
      <h1>Sup DAWGGG</h1>
      <BookList />
+     <AddBook />
     </div>
   );
 }
