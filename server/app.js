@@ -1,12 +1,9 @@
 const express = require('express');
 const app = express();
-const axios = require('axios');
 const { graphqlHTTP } = require('express-graphql');
-const fs = require('fs');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors')
-const baseUrl = 'https://api.shipengine.com';
 
 
 // Enable .env 
@@ -19,7 +16,7 @@ app.use(cors())
 mongoose.connect(process.env.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true } );
 mongoose.connection.once('open', () => { console.log('connected to database') })
 
-// handle incoming data for each endpoint
+// Specify middleware for each endpoint
 app.use(['/sms', '/batch'],express.urlencoded({ extended: false }));
 
 app.use('/batch', express.json());
@@ -34,13 +31,8 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true
 }));
 
-// Handle Post Requests
-// app.post('/sms', async (req, res) => {
-//     console.log(req.body, "lolSMS") // Action 
-//     res.sendStatus(200); // Respond
-// })
-
-app.all('/sms', function (request, res) {
+// Handle incoming SMS
+app.post('/sms', function (request, res) {
     let from_number = request.body.From || request.query.From;
     let to_number = request.body.To || request.query.To;
     let text = request.body.Text || request.query.Text;
