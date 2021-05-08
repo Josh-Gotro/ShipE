@@ -4,7 +4,7 @@ const { graphqlHTTP } = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors')
-const { parseAddress, validateAddress } = require('./shipE')
+const { parseAddress, validateAddress, createLabel } = require('./shipE')
 
 
 // Enable .env 
@@ -40,11 +40,14 @@ app.post('/sms', async function (request, res) {
     // console.log('Message received - From: ' + from_number + ', To: ' + to_number + ', Text: ' + text);
     res.sendStatus(200); // Respond
 
-    let formatedAddress = await parseAddress(text, from_number)
+    let formatedAddress = await parseAddress(text, from_number);
     // console.log("this is formatedAddress ", formatedAddress)
 
-    let checkedAddress = await validateAddress(formatedAddress)
-    console.log("this is matchedAddress ", checkedAddress.data[0].matched_address)
+    let checkedAddress = await validateAddress(formatedAddress);
+    console.log("this is matchedAddress ", checkedAddress)
+
+    let shippingLabel = await createLabel(checkedAddress.data[0].matched_address);
+    console.log("Your shipping label and tracking number are: ", shippingLabel.data.label_download.pdf, shippingLabel.data.tracking_number)
 
 });
 
