@@ -4,6 +4,7 @@ const { graphqlHTTP } = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors')
+const { parseAddress, validateAddress } = require('./shipE')
 
 
 // Enable .env 
@@ -13,11 +14,11 @@ require('dotenv').config();
 app.use(cors())
 
 // Connect to MongoDB
-mongoose.connect(process.env.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true } );
+mongoose.connect(process.env.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection.once('open', () => { console.log('connected to database') })
 
 // Specify middleware for each endpoint
-app.use(['/sms', '/batch'],express.urlencoded({ extended: false }));
+app.use(['/sms', '/batch'], express.urlencoded({ extended: false }));
 
 app.use('/batch', express.json());
 
@@ -32,12 +33,19 @@ app.use('/graphql', graphqlHTTP({
 }));
 
 // Handle incoming SMS
-app.post('/sms', function (request, res) {
+app.post('/sms', async function (request, res) {
     let from_number = request.body.From || request.query.From;
     let to_number = request.body.To || request.query.To;
     let text = request.body.Text || request.query.Text;
+    // console.log('Message received - From: ' + from_number + ', To: ' + to_number + ', Text: ' + text);
     res.sendStatus(200); // Respond
-    console.log('Message received - From: ' + from_number + ', To: ' + to_number + ', Text: ' + text);
+
+    let formatedAddress = await parseAddress(text, from_number)
+    // console.log("this is formatedAddress ", formatedAddress)
+
+    let checkedAddress = await validateAddress(formatedAddress)
+    console.log("this is matchedAddress ", checkedAddress.data[0].matched_address)
+
 });
 
 // Listen
