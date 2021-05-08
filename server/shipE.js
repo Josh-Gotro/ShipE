@@ -1,8 +1,13 @@
 const axios = require('axios');
 
+// Enable .env 
+require('dotenv').config();
+const API_KEY = process.env.API_KEY
+
+
 // dummy warehouse ship_from address
 const warehouseAddress = {
-    "name": "We Sell Widget",
+    "name": "Mr Croc",
     "company_name": "CROCS RETAIL, INC",
     "address_line1": "7477 DRY CREEK PKWY",
     "city_locality": "NIWOT",
@@ -20,7 +25,7 @@ module.exports = {
             url: 'https://api.shipengine.com/v1/addresses/recognize',
             method: 'post',
             responseType: 'application/json',
-            headers: { 'api-key': process.env.API_KEY },
+            headers: { 'api-key': API_KEY },
             data: { 
                 'text': e,
                 'address': {
@@ -42,7 +47,7 @@ module.exports = {
                 url: 'https://api.shipengine.com/v1/addresses/validate',
                 method: 'post',
                 responseType: 'application/json',
-                headers: { 'api-key': process.env.API_KEY },
+                headers: { 'api-key': API_KEY },
                 data: [ address ]
             })
             resolve(validatedAddress)
@@ -58,7 +63,7 @@ module.exports = {
                 url: 'https://api.shipengine.com/v1/labels',
                 method: 'post',
                 responseType: 'application/json',
-                headers: { 'api-key': process.env.API_KEY },
+                headers: { 'api-key': API_KEY },
                 data: {
                     "shipment": {
                         "service_code": "usps_priority_mail",
