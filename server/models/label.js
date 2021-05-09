@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const labelSchema = new Schema({
     ship_date: String,
-    shipment_cost: String,
+    shipment_cost: Number,
     tracking_number: String,
     label_download: String,
     addressId: String

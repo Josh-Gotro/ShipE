@@ -14,7 +14,8 @@ const {
     GraphQLID,
     GraphQLInt,
     GraphQLList,
-    GraphQLNonNull 
+    GraphQLNonNull,
+    GraphQLFloat 
 } = graphql;
 
 // TYPES
@@ -191,9 +192,8 @@ const Mutation = new GraphQLObjectType({
         addLabel: {
             type: LabelType,
             args: {
-                name: { type: new GraphQLNonNull(GraphQLString) },
                 ship_date: { type: new GraphQLNonNull(GraphQLString) },
-                shipment_cost: { type: new GraphQLNonNull(GraphQLString) },
+                shipment_cost: { type: new GraphQLNonNull(GraphQLFloat) },
                 tracking_number: { type: new GraphQLNonNull(GraphQLString) },
                 label_download: { type: new GraphQLNonNull(GraphQLString) },
                 addressId: { type: new GraphQLNonNull(GraphQLID) }
