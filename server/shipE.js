@@ -56,37 +56,36 @@ module.exports = {
 
     // Shipengine Create Shipping Label
     createLabel: function (shippingAddress) {
-        console.log("!!!!!!!!!!!!!!!", shippingAddress)
-
-        return new Promise(function (resolve) {
-            const shippingLabel = axios({
-                url: 'https://api.shipengine.com/v1/labels',
-                method: 'post',
-                responseType: 'application/json',
-                headers: { 'api-key': API_KEY },
-                data: {
-                    "shipment": {
-                        "service_code": "usps_priority_mail",
-                        "ship_from": warehouseAddress,
-                        "ship_to": shippingAddress,
-                        "packages": [
-                            {
-                                "weight": {
-                                    "value": 17,
-                                    "unit": "pound"
-                                },
-                                "dimensions": {
-                                    "length": 36,
-                                    "width": 12,
-                                    "height": 24,
-                                    "unit": "inch"
+        console.log("Matched Shipping Address: ", shippingAddress)
+            return new Promise(function (resolve) {
+                const shippingLabel = axios({
+                    url: 'https://api.shipengine.com/v1/labels',
+                    method: 'post',
+                    responseType: 'application/json',
+                    headers: { 'api-key': API_KEY },
+                    data: {
+                        "shipment": {
+                            "service_code": "usps_priority_mail",
+                            "ship_from": warehouseAddress,
+                            "ship_to": shippingAddress,
+                            "packages": [
+                                {
+                                    "weight": {
+                                        "value": 17,
+                                        "unit": "pound"
+                                    },
+                                    "dimensions": {
+                                        "length": 36,
+                                        "width": 12,
+                                        "height": 24,
+                                        "unit": "inch"
+                                    }
                                 }
-                            }
-                        ]
+                            ]
+                        }
                     }
-                }
+                })
+                resolve(shippingLabel)
             })
-            resolve(shippingLabel)
-        })
     }
 };
