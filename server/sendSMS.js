@@ -23,7 +23,7 @@ module.exports = {
         })();
     }, 
 
-    replyBadAddress: function (replyToNumber, labelURL, trackingNumber) {
+    replyBadAddress: function (replyToNumber, errorReason) {
 
         (function main() {
             'use strict';
@@ -35,7 +35,7 @@ module.exports = {
                 `Please send a valid shipping address` +
                 ` and include the recipients name, street address, ` +
                 `city, state, and zipcode\n\n` +
-                `At this time we only accept US addresses.` 
+                `Error: ${errorReason}` 
             ).then(function (res) { console.log(res) })
         })();
     },

@@ -3,9 +3,9 @@ const app = express();
 const { graphqlHTTP } = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
-const cors = require('cors')
-const { parseAddress, validateAddress, createLabel } = require('./shipE')
-const { replySMS, replyBadAddress } = require('./sendSMS')
+const cors = require('cors');
+const { parseAddress, validateAddress, createLabel } = require('./shipE');
+const { replySMS, replyBadAddress } = require('./sendSMS');
 
 // Enable .env 
 require('dotenv').config();
@@ -40,24 +40,22 @@ app.post('/sms', async function (request, res) {
 
     // Parse address from SMS using ShipE /recognize
     let formatedAddress = await parseAddress(text, fromNumber);
+    console.log("formatted address", formatedAddress.data.address)
 
     // Validate parsed addres using ShipE /validate
-    let checkedAddress = await validateAddress(formatedAddress);
-    console.log("!!!!!!whoami!!!!!!", checkedAddress.data[0])
+    let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);
+    console.log("matched address:", checkedAddress.data[0].matched_address)
 
-    // If Valid, create shipping label using ShipE /labels & reply to SMS 
-    if (checkedAddress.data[0].status == 'verified') {
-        let shippingLabel = await createLabel(checkedAddress.data[0].matched_address);
-        let labelURL = shippingLabel.data.label_download.pdf;
-        let trackingNumber = shippingLabel.data.tracking_number;
+    // Create Shipping Label
+    let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
+    console.log("console log shipping label:", shippingLabel.data.label_download.pdf)
+    let labelURL = shippingLabel.data.label_download.pdf;
+    let trackingNumber = shippingLabel.data.tracking_number;
 
-        // Send reply SMS with Label URL and tracking number
-        replySMS(fromNumber, labelURL, trackingNumber)
-    } else {
+    // Send SMS confirmation with label pdf and tracking number
+    let repliedToSMS = await replySMS(fromNumber, labelURL, trackingNumber)
 
-        // Send reply SMS requesting valid address info
-        replyBadAddress(fromNumber);
-    }
+
 });
 
 // Listen

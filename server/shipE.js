@@ -1,4 +1,6 @@
 const axios = require('axios');
+const { replyBadAddress } = require('./sendSMS');
+
 
 // Enable .env 
 require('dotenv').config();
@@ -20,72 +22,84 @@ const warehouseAddress = {
 module.exports = {
 
     // ShipEngine Parse Address
-    parseAddress: async function (e, from_number) {
-        const smsAddress = await axios({
-            url: 'https://api.shipengine.com/v1/addresses/recognize',
-            method: 'post',
-            responseType: 'application/json',
-            headers: { 'api-key': API_KEY },
-            data: { 
-                'text': e,
-                'address': {
-                    'country_code': 'US', 
-                    'phone': from_number
+    parseAddress: function (e, from_number) {
+        return new Promise(function (resolve) {
+            const smsAddress = axios({
+                url: 'https://api.shipengine.com/v1/addresses/recognize',
+                method: 'post',
+                responseType: 'application/json',
+                headers: { 'api-key': API_KEY },
+                data: {
+                    'text': e,
+                    'address': {
+                        'country_code': 'US',
+                        'phone': from_number
+                    }
                 }
-            }
-        });
-        // Returns an object
-        console.log(smsAddress.data.address);
-        return smsAddress.data.address
+            })
+            resolve(smsAddress)
+        }).catch((e) => {
+            console.log("ERROR:", e.response.data.errors)
+            let error = e.response.data.errors[0].message;
+            console.log(error)
+            return replyBadAddress(fromNumber, error)
+        })
     },
 
     // ShipEngine Validate Address
-    validateAddress: function (address) {
+    validateAddress: function (address, fromNumber) {
         // console.log("validateAddress function: ", address)
-        return new Promise(function(resolve){
+        return new Promise(function (resolve) {
             const validatedAddress = axios({
                 url: 'https://api.shipengine.com/v1/addresses/validate',
                 method: 'post',
                 responseType: 'application/json',
                 headers: { 'api-key': API_KEY },
-                data: [ address ]
+                data: [address]
             })
             resolve(validatedAddress)
+        }).catch((e) => {
+            console.log("ERROR:", e.response.data.errors)
+            let error = e.response.data.errors[0].message;
+            return replyBadAddress(fromNumber, error)
         })
-    }, 
+    },
 
     // Shipengine Create Shipping Label
-    createLabel: function (shippingAddress) {
-        console.log("Matched Shipping Address: ", shippingAddress)
-            return new Promise(function (resolve) {
-                const shippingLabel = axios({
-                    url: 'https://api.shipengine.com/v1/labels',
-                    method: 'post',
-                    responseType: 'application/json',
-                    headers: { 'api-key': API_KEY },
-                    data: {
-                        "shipment": {
-                            "service_code": "usps_priority_mail",
-                            "ship_from": warehouseAddress,
-                            "ship_to": shippingAddress,
-                            "packages": [
-                                {
-                                    "weight": {
-                                        "value": 17,
-                                        "unit": "pound"
-                                    },
-                                    "dimensions": {
-                                        "length": 36,
-                                        "width": 12,
-                                        "height": 24,
-                                        "unit": "inch"
-                                    }
+    createLabel: function (shippingAddress, fromNumber) {
+        return new Promise(function (resolve) {
+            const shippingLabel = axios({
+                url: 'https://api.shipengine.com/v1/labels',
+                method: 'post',
+                responseType: 'application/json',
+                headers: { 'api-key': API_KEY },
+                data: {
+                    "shipment": {
+                        "service_code": "usps_priority_mail",
+                        "ship_from": warehouseAddress,
+                        "ship_to": shippingAddress,
+                        "packages": [
+                            {
+                                "weight": {
+                                    "value": 17,
+                                    "unit": "pound"
+                                },
+                                "dimensions": {
+                                    "length": 36,
+                                    "width": 12,
+                                    "height": 24,
+                                    "unit": "inch"
                                 }
-                            ]
-                        }
+                            }
+                        ]
                     }
-                })
-                resolve(shippingLabel)
+                }
             })
+            resolve(shippingLabel)
+        }).catch((e) => {
+            console.log("ERROR:", e.response.data.errors)
+            let error = e.response.data.errors[0].message;
+            return replyBadAddress(fromNumber, error)
+        })
     }
 };
