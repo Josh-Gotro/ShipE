@@ -49,7 +49,7 @@ const getAddressesQuery = gql`
 }
 `
 
-const getlabelsQuery = gql`
+const getLabelsQuery = gql`
 {
   labels{
       ship_date
@@ -114,4 +114,4 @@ mutation($ship_date: String!, $shipment_cost: Number!, $tracking_number: String!
 }
 `
 
-export { getAuthorsQuery, getBooksQuery, addBookMutation, getAddressesQuery, getlabelsQuery, addAddressMutation, addLabelMutation };
+export { getAuthorsQuery, getBooksQuery, addBookMutation, getAddressesQuery, getLabelsQuery, addAddressMutation, addLabelMutation };

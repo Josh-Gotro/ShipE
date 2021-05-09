@@ -48,7 +48,7 @@ app.post('/sms', async function (request, res) {
 
     // Create Shipping Label
     let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
-    console.log("console log shipping label:", shippingLabel.data.label_download.pdf)
+    // console.log("console log shipping label:", shippingLabel.data.label_download.pdf)
     let labelURL = shippingLabel.data.label_download.pdf;
     let trackingNumber = shippingLabel.data.tracking_number;
 

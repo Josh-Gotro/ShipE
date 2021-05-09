@@ -75,7 +75,7 @@ module.exports = {
                 headers: { 'api-key': API_KEY },
                 data: {
                     "shipment": {
-                        "service_code": "usps_priority_mail",
+                        "service_code": "ups_ground",
                         "ship_from": warehouseAddress,
                         "ship_to": shippingAddress,
                         "packages": [

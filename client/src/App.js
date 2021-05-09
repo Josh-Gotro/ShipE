@@ -1,13 +1,11 @@
-import BookList from './components/BookList'
-import AddBook from './components/AddBook'
+import LabelList from './components/LabelList'
 
 
 function App() {
   return (
     <div id="main" className="App">
-     <h1>Sup DAWGGG</h1>
-     <BookList />
-     <AddBook />
+      <h1>Shipping Labels</h1>
+      <LabelList />
     </div>
   );
 }
