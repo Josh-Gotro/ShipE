@@ -5,7 +5,7 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { parseAddress, validateAddress, createLabel } = require('./shipE');
-const { replySMS } = require('./sendSMS');
+const { replySMS, replyBadAddress } = require('./sendSMS');
 const { saveAddress, saveLabel } = require('./controllers');
 const Address = require('./models/address')
 
@@ -43,29 +43,33 @@ app.post('/sms', async function (request, res) {
 
     // Parse address from SMS using ShipE /recognize
     let formatedAddress = await parseAddress(text, fromNumber);
-    // console.log("formatted address", formatedAddress.data.address)
-
+    
     // Validate parsed addres using ShipE /validate
     let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);
-    let currentReceiver = checkedAddress.data[0].matched_address
-    // console.log("matched address:", checkedAddress.data[0].matched_address)
-    let persistedAddress = await saveAddress(currentReceiver)
-    console.log("$$4$$4$$4 Persisted Address", persistedAddress)
+    console.log(checkedAddress.data[0])
 
-    // Create Shipping Label
-    let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
+    
+    // If the address is valid
+    if (checkedAddress.data[0].status == 'valid'){
+        // Save Address to MongoDB
+        let currentReceiver = checkedAddress.data[0].matched_address
+        let persistedAddress = await saveAddress(currentReceiver)
 
-    // Save shipping label Mongo DB, associated to address
-    let persistedLabel = await saveLabel(shippingLabel.data, persistedAddress._id)
-    console.log("persisted label: ", persistedLabel)
-
-
-    // Send SMS confirmation with label pdf and tracking number
-    let labelURL = shippingLabel.data.label_download.pdf;
-    let trackingNumber = shippingLabel.data.tracking_number;
-    // let replySuccess = replySMS(fromNumber, labelURL, trackingNumber)
-
-
+        // Create Shipping Label
+        let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
+    
+        // Save shipping label Mongo DB, associated to address
+        let persistedLabel = await saveLabel(shippingLabel.data, persistedAddress._id)
+    
+        // Send SMS confirmation with label pdf and tracking number
+        let labelURL = shippingLabel.data.label_download.pdf;
+        let trackingNumber = shippingLabel.data.tracking_number;
+        let replySuccess = replySMS(fromNumber, labelURL, trackingNumber)
+    } else {
+        // Return SMS to inform customer the addres isn't valid
+        let error = "Invalid input."
+        replyBadAddress(fromNumber, error)
+    };
 });
 
 // Listen

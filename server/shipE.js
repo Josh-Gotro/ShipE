@@ -36,13 +36,13 @@ module.exports = {
                         'phone': from_number
                     }
                 }
+            }).catch((e) => {
+                console.log("ERROR:", e.response.data.errors)
+                let error = e.response.data.errors[0].message;
+                console.log(error)
+                return replyBadAddress(fromNumber, error)
             })
             resolve(smsAddress)
-        }).catch((e) => {
-            console.log("ERROR:", e.response.data.errors)
-            let error = e.response.data.errors[0].message;
-            console.log(error)
-            return replyBadAddress(fromNumber, error)
         })
     },
 
