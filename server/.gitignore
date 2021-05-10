@@ -6,3 +6,6 @@
 
 # build notes and dead code
 notes.js
+
+# hide react
+../client

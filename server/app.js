@@ -5,7 +5,9 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { parseAddress, validateAddress, createLabel } = require('./shipE');
-const { replySMS, replyBadAddress } = require('./sendSMS');
+const { replySMS } = require('./sendSMS');
+const { saveAddress } = require('./controllers');
+const Address = require('./models/address')
 
 // Enable .env 
 require('dotenv').config();
@@ -14,8 +16,9 @@ require('dotenv').config();
 app.use(cors())
 
 // Connect to MongoDB
-mongoose.connect(process.env.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
 mongoose.connection.once('open', () => { console.log('connected to database') })
+
 
 // Specify middleware for each endpoint
 app.use('/sms', express.urlencoded({ extended: false }));
@@ -40,20 +43,24 @@ app.post('/sms', async function (request, res) {
 
     // Parse address from SMS using ShipE /recognize
     let formatedAddress = await parseAddress(text, fromNumber);
-    console.log("formatted address", formatedAddress.data.address)
+    // console.log("formatted address", formatedAddress.data.address)
 
     // Validate parsed addres using ShipE /validate
     let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);
-    console.log("matched address:", checkedAddress.data[0].matched_address)
+    let currentReceiver = checkedAddress.data[0].matched_address
+    // console.log("matched address:", checkedAddress.data[0].matched_address)
+    let persistedAddress = await saveAddress(currentReceiver)
 
     // Create Shipping Label
     let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
-    // console.log("console log shipping label:", shippingLabel.data.label_download.pdf)
-    let labelURL = shippingLabel.data.label_download.pdf;
-    let trackingNumber = shippingLabel.data.tracking_number;
+    console.log(shippingLabel.data)
+
+    // Attach shipping label to Address in Mongo DB
 
     // Send SMS confirmation with label pdf and tracking number
-    let repliedToSMS = await replySMS(fromNumber, labelURL, trackingNumber)
+    let labelURL = shippingLabel.data.label_download.pdf;
+    let trackingNumber = shippingLabel.data.tracking_number;
+    // let replySuccess = replySMS(fromNumber, labelURL, trackingNumber)
 
 
 });
