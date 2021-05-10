@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const { parseAddress, validateAddress, createLabel } = require('./shipE');
 const { replySMS } = require('./sendSMS');
-const { saveAddress } = require('./controllers');
+const { saveAddress, saveLabel } = require('./controllers');
 const Address = require('./models/address')
 
 // Enable .env 
@@ -50,12 +50,15 @@ app.post('/sms', async function (request, res) {
     let currentReceiver = checkedAddress.data[0].matched_address
     // console.log("matched address:", checkedAddress.data[0].matched_address)
     let persistedAddress = await saveAddress(currentReceiver)
+    console.log("$$4$$4$$4 Persisted Address", persistedAddress)
 
     // Create Shipping Label
     let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
-    console.log(shippingLabel.data)
 
-    // Attach shipping label to Address in Mongo DB
+    // Save shipping label Mongo DB, associated to address
+    let persistedLabel = await saveLabel(shippingLabel.data, persistedAddress._id)
+    console.log("persisted label: ", persistedLabel)
+
 
     // Send SMS confirmation with label pdf and tracking number
     let labelURL = shippingLabel.data.label_download.pdf;
