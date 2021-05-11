@@ -104,7 +104,7 @@ Plivo
 7. Copy the [number you rented](https://console.plivo.com/active-phone-numbers/) and add it to `server/.env` under the key  `P_NUMBER`.  
  
 *ex:*  
-```P_Number="+15125881023"```  
+```P_Number="+15555555555"```  
 
 MongoDB  
 1. Login or Sign up and try [MongoDB](https://www.mongodb.com/try) for free. (If you already have an account and can create a cluste, skip to step 7)
