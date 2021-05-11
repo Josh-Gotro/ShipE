@@ -50,25 +50,26 @@ app.post('/sms', async function (request, res) {
 
     
     // If the address is valid
-    if (checkedAddress.data[0].status == 'valid'){
+    if (checkedAddress.data[0].status == 'error'){
+        
+        // Return SMS to inform customer the addres isn't valid
+        let error = "Invalid input."
+        replyBadAddress(fromNumber, error)
+    } else {
         // Save Address to MongoDB
         let currentReceiver = checkedAddress.data[0].matched_address
         let persistedAddress = await saveAddress(currentReceiver)
 
         // Create Shipping Label
         let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
-    
+
         // Save shipping label Mongo DB, associated to address
         let persistedLabel = await saveLabel(shippingLabel.data, persistedAddress._id)
-    
+
         // Send SMS confirmation with label pdf and tracking number
         let labelURL = shippingLabel.data.label_download.pdf;
         let trackingNumber = shippingLabel.data.tracking_number;
         let replySuccess = replySMS(fromNumber, labelURL, trackingNumber)
-    } else {
-        // Return SMS to inform customer the addres isn't valid
-        let error = "Invalid input."
-        replyBadAddress(fromNumber, error)
     };
 });
 

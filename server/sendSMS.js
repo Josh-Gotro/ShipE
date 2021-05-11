@@ -4,6 +4,7 @@ const plivo = require('plivo');
 require('dotenv').config();
 const Auth_ID = process.env.P_AUTH;
 const Auth_Token = process.env.P_TOKEN;
+const P_Number = process.env.P_Number;
 
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
             'use strict';
             const client = new plivo.Client(Auth_ID, Auth_Token);
             client.messages.create(
-                "+15125881023",
+                P_Number,
                 replyToNumber,
                 `Hello, from wesellonething.biz!\n\n` +
                 `Shipping Label:\n ${labelURL}\n\n` +
@@ -29,7 +30,7 @@ module.exports = {
             'use strict';
             const client = new plivo.Client(Auth_ID, Auth_Token);
             client.messages.create(
-                "+15125881023",
+                P_Number,
                 replyToNumber,
                 `Hello, from wesellonething.biz!\n\n` +
                 `Please send a valid shipping address` +
