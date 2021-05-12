@@ -46,8 +46,6 @@ app.post('/sms', async function (request, res) {
     
     // Validate parsed addres using ShipE /validate
     let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);
-    console.log(checkedAddress.data[0])
-
     
     // If the address is valid
     if (checkedAddress.data[0].status == 'error'){

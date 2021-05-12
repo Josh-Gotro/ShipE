@@ -16,17 +16,17 @@ function LabelList() {
         address,
         id
     }) => (
-        <>
+        <div className="ShippingContainer">
             <div className="Label" key={id}>
-                Printing Label: <a href={label_download}>{label_download}</a><br></br>
+                Printing Label: <br></br><a href={label_download}>{"View Label PDF"}</a><br></br>
                 Tracking Number: {tracking_number}<br></br>
                 Ship Date: {ship_date}<br></br>
                 Shipping Cost: ${shipment_cost}<br></br><br></br>
-            </div><br></br>
+            </div>
             <div className="Address" key={tracking_number}>
                 <Address key={tracking_number} address={address} addressID={id} />
             </div>
-        </>
+        </div>
     ));
 }
 
