@@ -1,4 +1,4 @@
-# ShipEngine SMS Label Creater
+# ShipEngine SMS Label Creator
 <div style="page-break-after: always;"></div>
 An SMS auto-responder that creates shipping labels from natural language requests. 
 </br></br>
