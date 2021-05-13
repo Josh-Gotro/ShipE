@@ -35,7 +35,7 @@ const Address = (props) => {
 
     return (
         <>
-            <button onClick={() => setToggle(v => !v)}>{actionWord()} + ADDRESS</button>
+            <button className="button" onClick={() => setToggle(v => !v)}>{actionWord()} + ADDRESS</button>
             <div>
                 {toggle ? showAddress() : null}
             </div>
