@@ -45,15 +45,19 @@ app.post('/sms', async function (request, res) {
     let formatedAddress = await parseAddress(text, fromNumber);
     
     // Validate parsed addres using ShipE /validate
-    let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);
+    let checkedAddress = await validateAddress(formatedAddress.data.address, fromNumber);    
     
-    // If the address is valid
+    // Handle reply sms pending error status
     if (checkedAddress.data[0].status == 'error'){
+
+        // Save Error Message 
+        let invalidAddressError;
+        if (checkedAddress.data[0].messages[0].message) { invalidAddressError = checkedAddress.data[0].messages[0].message };
         
         // Return SMS to inform customer the addres isn't valid
-        let error = "Invalid input."
-        replyBadAddress(fromNumber, error)
+        replyBadAddress(fromNumber, invalidAddressError)
     } else {
+
         // Save Address to MongoDB
         let currentReceiver = checkedAddress.data[0].matched_address
         let persistedAddress = await saveAddress(currentReceiver)

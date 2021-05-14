@@ -38,9 +38,6 @@ module.exports = {
                 }
             }).catch((e) => {
                 console.log("ERROR:", e.response.data.errors)
-                let error = e.response.data.errors[0].message;
-                console.log(error)
-                return replyBadAddress(fromNumber, error)
             })
             resolve(smsAddress)
         })
@@ -56,12 +53,10 @@ module.exports = {
                 responseType: 'application/json',
                 headers: { 'api-key': API_KEY },
                 data: [address]
+            }).catch((e) => {
+                console.log("ERROR:", e.response.data.errors)
             })
             resolve(validatedAddress)
-        }).catch((e) => {
-            console.log("ERROR:", e.response.data.errors)
-            let error = e.response.data.errors[0].message;
-            return replyBadAddress(fromNumber, error)
         })
     },
 
@@ -94,12 +89,10 @@ module.exports = {
                         ]
                     }
                 }
+            }).catch((e) => {
+                console.log("ERROR:", e.response.data.errors)
             })
             resolve(shippingLabel)
-        }).catch((e) => {
-            console.log("ERROR:", e.response.data.errors)
-            let error = e.response.data.errors[0].message;
-            return replyBadAddress(fromNumber, error)
         })
     }
 };
