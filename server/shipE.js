@@ -1,23 +1,9 @@
 const axios = require('axios');
 const { replyBadAddress } = require('./sendSMS');
 
-
 // Enable .env 
 require('dotenv').config();
 const API_KEY = process.env.API_KEY
-
-
-// dummy warehouse ship_from address
-const warehouseAddress = {
-    "name": "Mr Croc",
-    "company_name": "CROCS RETAIL, INC",
-    "address_line1": "7477 DRY CREEK PKWY",
-    "city_locality": "NIWOT",
-    "state_province": "CO",
-    "postal_code": "80503-8021",
-    "country_code": "US",
-    "phone": "512-555-5555"
-}
 
 module.exports = {
 
@@ -61,7 +47,7 @@ module.exports = {
     },
 
     // Shipengine Create Shipping Label
-    createLabel: function (shippingAddress, fromNumber) {
+    createLabel: function (shippingAddress, fromAddress) {
         return new Promise(function (resolve) {
             const shippingLabel = axios({
                 url: 'https://api.shipengine.com/v1/labels',
@@ -71,7 +57,7 @@ module.exports = {
                 data: {
                     "shipment": {
                         "service_code": "ups_ground",
-                        "ship_from": warehouseAddress,
+                        "ship_from": fromAddress,
                         "ship_to": shippingAddress,
                         "packages": [
                             {

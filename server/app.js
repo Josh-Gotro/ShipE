@@ -37,10 +37,11 @@ app.use('/graphql', graphqlHTTP({
 app.post('/sms', async function (request, res) {
     res.sendStatus(200); // Respond
 
+    
     // Assign variables from incoming SMS
     let fromNumber = request.body.From;
     let text = request.body.Text;
-
+    
     // Parse address from SMS using ShipE /recognize
     let formatedAddress = await parseAddress(text, fromNumber);
     
@@ -49,7 +50,7 @@ app.post('/sms', async function (request, res) {
     
     // Handle reply sms pending error status
     if (checkedAddress.data[0].status == 'error'){
-
+        
         // Save Error Message 
         let invalidAddressError;
         if (checkedAddress.data[0].messages[0].message) { invalidAddressError = checkedAddress.data[0].messages[0].message };
@@ -57,13 +58,16 @@ app.post('/sms', async function (request, res) {
         // Return SMS to inform customer the addres isn't valid
         replyBadAddress(fromNumber, invalidAddressError)
     } else {
-
+        
         // Save Address to MongoDB
         let currentReceiver = checkedAddress.data[0].matched_address
         let persistedAddress = await saveAddress(currentReceiver)
-
+        
+        // Retrieve Warehouse/sender Address from MongoDB
+        const fromAddress = await Address.findById("6097522de12819618ca081b9")
+        
         // Create Shipping Label
-        let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromNumber);
+        let shippingLabel = await createLabel(checkedAddress.data[0].matched_address, fromAddress);
 
         // Save shipping label Mongo DB, associated to address
         let persistedLabel = await saveLabel(shippingLabel.data, persistedAddress._id)
