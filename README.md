@@ -107,7 +107,7 @@ Plivo
 ```P_Number="+15555555555"```  
 
 MongoDB  
-1. Login or Sign up and try [MongoDB](https://www.mongodb.com/try) for free. (If you already have an account and can create a cluste, skip to step 7)
+1. Login or Sign up and try [MongoDB](https://www.mongodb.com/try) for free. (If you already have an account and can create a cluster, skip to step 7)
 2. Click the green "Build a Cluster" button, then select your price tier (free). 
 3. Choose the Cloud Providor and Region of your preference. (I used AWS/N. Virginia)
 4. Click "Create Cluster", this will take some time to create. 
