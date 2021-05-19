@@ -88,7 +88,7 @@ Plivo
 1. Follow the signup instructions to create and upgrade an account with [Plivo](https://console.plivo.com/accounts/register/).  
 *Note: you may use a trial account, which includes free credits, but you will be restricted to testing only from your personal phone number.*  
 2. Rent a number following [these instructions](https://support.plivo.com/hc/en-us/articles/360041397412-How-can-I-rent-a-phone-number-), ensuring to choose one that is SMS enabled. 
-3. Create an application and assign a number to it following [these instructions](https://support.plivo.com/hc/en-us/articles/360041395852-How-can-I-set-up-an-application-and-assign-a-number-to-it-). 
+3. Create an application and assign your number to it following [these instructions](https://support.plivo.com/hc/en-us/articles/360041395852-How-can-I-set-up-an-application-and-assign-a-number-to-it-). 
 4. Navigate to the application settings. In the "Message URL" field, enter one of the "forwarding" Ngrok urls with `/sms` appended to the end.  
 
 *ex:*  
